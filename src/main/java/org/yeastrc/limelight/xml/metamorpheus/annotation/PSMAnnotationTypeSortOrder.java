@@ -13,15 +13,15 @@ public class PSMAnnotationTypeSortOrder {
 
 		{
 			SearchAnnotation annotation = new SearchAnnotation();
-			annotation.setAnnotationName( PSMAnnotationTypes.PFIND_ANNOTATION_TYPE_CALCULATED_FDR );
-			annotation.setSearchProgram( Constants.PROGRAM_NAME_PFIND );
+			annotation.setAnnotationName( PSMAnnotationTypes.ANNOTATION_TYPE_QVALUE );
+			annotation.setSearchProgram( Constants.PROGRAM_NAME );
 			annotations.add( annotation );
 		}
 
 		{
 			SearchAnnotation annotation = new SearchAnnotation();
-			annotation.setAnnotationName( PSMAnnotationTypes.PFIND_ANNOTATION_TYPE_QVALUE );
-			annotation.setSearchProgram( Constants.PROGRAM_NAME_PFIND );
+			annotation.setAnnotationName( PSMAnnotationTypes.ANNOTATION_TYPE_SCORE );
+			annotation.setSearchProgram( Constants.PROGRAM_NAME );
 			annotations.add( annotation );
 		}
 		

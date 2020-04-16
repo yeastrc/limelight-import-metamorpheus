@@ -1,8 +1,8 @@
 package org.yeastrc.limelight.xml.metamorpheus.utils;
 
-import org.yeastrc.limelight.xml.metamorpheus.objects.PFindPSM;
-import org.yeastrc.limelight.xml.metamorpheus.objects.PFindReportedPeptide;
-import org.yeastrc.limelight.xml.metamorpheus.objects.PFindResults;
+import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusPSM;
+import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusReportedPeptide;
+import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusResults;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class ReportedPeptideUtils {
 
-    public static PFindReportedPeptide getReportedPeptide(String peptideSequence, Map<Integer, BigDecimal> mods) {
+    public static MetamorpheusReportedPeptide getReportedPeptide(String peptideSequence, Map<Integer, BigDecimal> mods) {
 
-        PFindReportedPeptide reportedPeptide = new PFindReportedPeptide();
+        MetamorpheusReportedPeptide reportedPeptide = new MetamorpheusReportedPeptide();
 
         reportedPeptide.setMods( mods );
         reportedPeptide.setNakedPeptide( peptideSequence );
@@ -70,9 +70,9 @@ public class ReportedPeptideUtils {
         return sb.toString();
     }
 
-    public static boolean reportedPeptideOnlyContainsDecoys(PFindResults pfindResults, PFindReportedPeptide pfindReportedPeptide ) {
+    public static boolean reportedPeptideOnlyContainsDecoys(MetamorpheusResults pfindResults, MetamorpheusReportedPeptide pfindReportedPeptide ) {
 
-        for(PFindPSM psm : pfindResults.getPeptidePSMMap().get(pfindReportedPeptide)) {
+        for(MetamorpheusPSM psm : pfindResults.getPeptidePSMMap().get(pfindReportedPeptide)) {
 
             if( !psm.isDecoy() ) {
                 return false;

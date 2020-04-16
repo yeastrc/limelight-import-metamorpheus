@@ -28,33 +28,27 @@ import org.yeastrc.limelight.limelight_import.api.xml_dto.FilterablePsmAnnotatio
 
 public class PSMAnnotationTypes {
 
-	// open pfind scores
-	public static final String PFIND_ANNOTATION_TYPE_QVALUE = "q-value";
-	public static final String PFIND_ANNOTATION_TYPE_RAW_SCORE = "raw score";
-	public static final String PFIND_ANNOTATION_TYPE_FINAL_SCORE = "final score";
-	public static final String PFIND_ANNOTATION_TYPE_MASS_SHIFT = "mass shift";
-	public static final String PFIND_ANNOTATION_TYPE_AVG_FRAG_MASS_SHIFT = "avg. frag. mass shift";
-	public static final String PFIND_ANNOTATION_TYPE_SPECIFICITY = "specificity";
+	// metamorpheus scores
+	public static final String ANNOTATION_TYPE_QVALUE = "q-value";
+	public static final String ANNOTATION_TYPE_SCORE = "score";
+	public static final String ANNOTATION_TYPE_MASS_DIFF = "mass diff.";
 
-	public static final String PFIND_ANNOTATION_TYPE_CALCULATED_FDR = "Calculated FDR";
-
-	
-	
 	public static List<FilterablePsmAnnotationType> getFilterablePsmAnnotationTypes() {
 		List<FilterablePsmAnnotationType> types = new ArrayList<FilterablePsmAnnotationType>();
 
 		{
 			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
-			type.setName( PFIND_ANNOTATION_TYPE_QVALUE );
+			type.setName( ANNOTATION_TYPE_QVALUE );
 			type.setDescription( "Q-value" );
 			type.setFilterDirection( FilterDirectionType.BELOW );
+			type.setDefaultFilterValue(new BigDecimal("0.01"));
 
 			types.add( type );
 		}
 
 		{
 			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
-			type.setName( PFIND_ANNOTATION_TYPE_RAW_SCORE );
+			type.setName( ANNOTATION_TYPE_SCORE );
 			type.setDescription( "Raw Score" );
 			type.setFilterDirection( FilterDirectionType.ABOVE );
 
@@ -63,46 +57,9 @@ public class PSMAnnotationTypes {
 
 		{
 			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
-			type.setName( PFIND_ANNOTATION_TYPE_FINAL_SCORE );
+			type.setName( ANNOTATION_TYPE_MASS_DIFF );
 			type.setDescription( "Final Score" );
 			type.setFilterDirection( FilterDirectionType.BELOW );
-
-			types.add( type );
-		}
-
-		{
-			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
-			type.setName( PFIND_ANNOTATION_TYPE_MASS_SHIFT );
-			type.setDescription( "Mass Shift" );
-			type.setFilterDirection( FilterDirectionType.BELOW );
-
-			types.add( type );
-		}
-
-		{
-			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
-			type.setName( PFIND_ANNOTATION_TYPE_AVG_FRAG_MASS_SHIFT );
-			type.setDescription( "Average fragment mass shift" );
-			type.setFilterDirection( FilterDirectionType.BELOW );
-
-			types.add( type );
-		}
-
-		{
-			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
-			type.setName( PFIND_ANNOTATION_TYPE_SPECIFICITY );
-			type.setDescription( "Specificity" );
-			type.setFilterDirection( FilterDirectionType.ABOVE );
-
-			types.add( type );
-		}
-
-		{
-			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
-			type.setName( PFIND_ANNOTATION_TYPE_CALCULATED_FDR );
-			type.setDescription( "Calculated FDR" );
-			type.setFilterDirection( FilterDirectionType.BELOW );
-			type.setDefaultFilterValue( new BigDecimal("0.01" ));
 
 			types.add( type );
 		}

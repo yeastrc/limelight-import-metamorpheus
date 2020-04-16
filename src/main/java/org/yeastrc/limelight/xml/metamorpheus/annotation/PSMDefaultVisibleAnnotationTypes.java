@@ -35,29 +35,22 @@ public class PSMDefaultVisibleAnnotationTypes {
 
 		{
 			SearchAnnotation annotation = new SearchAnnotation();
-			annotation.setAnnotationName( PSMAnnotationTypes.PFIND_ANNOTATION_TYPE_CALCULATED_FDR );
-			annotation.setSearchProgram( Constants.PROGRAM_NAME_PFIND );
+			annotation.setAnnotationName( PSMAnnotationTypes.ANNOTATION_TYPE_QVALUE );
+			annotation.setSearchProgram( Constants.PROGRAM_NAME );
 			annotations.add( annotation );
 		}
 
 		{
 			SearchAnnotation annotation = new SearchAnnotation();
-			annotation.setAnnotationName( PSMAnnotationTypes.PFIND_ANNOTATION_TYPE_QVALUE );
-			annotation.setSearchProgram( Constants.PROGRAM_NAME_PFIND );
+			annotation.setAnnotationName( PSMAnnotationTypes.ANNOTATION_TYPE_SCORE );
+			annotation.setSearchProgram( Constants.PROGRAM_NAME );
 			annotations.add( annotation );
 		}
 
 		{
 			SearchAnnotation annotation = new SearchAnnotation();
-			annotation.setAnnotationName( PSMAnnotationTypes.PFIND_ANNOTATION_TYPE_FINAL_SCORE );
-			annotation.setSearchProgram( Constants.PROGRAM_NAME_PFIND );
-			annotations.add( annotation );
-		}
-		
-		{
-			SearchAnnotation annotation = new SearchAnnotation();
-			annotation.setAnnotationName( PSMAnnotationTypes.PFIND_ANNOTATION_TYPE_AVG_FRAG_MASS_SHIFT );
-			annotation.setSearchProgram( Constants.PROGRAM_NAME_PFIND );
+			annotation.setAnnotationName( PSMAnnotationTypes.ANNOTATION_TYPE_MASS_DIFF );
+			annotation.setSearchProgram( Constants.PROGRAM_NAME );
 			annotations.add( annotation );
 		}
 

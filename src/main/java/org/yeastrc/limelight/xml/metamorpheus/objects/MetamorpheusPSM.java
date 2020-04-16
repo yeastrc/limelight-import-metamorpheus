@@ -5,14 +5,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-public class PFindPSM {
+public class MetamorpheusPSM {
 
 	private BigDecimal qValue;
-	private BigDecimal massShift;
-	private BigDecimal rawScore;
-	private BigDecimal finalScore;
-	private BigDecimal avgFragMassShift;
-	private int specificity;
+	private BigDecimal massDiff;
+	private BigDecimal score;
 
 	private int scanNumber;
 	private BigDecimal precursorNeutralMass;
@@ -20,28 +17,8 @@ public class PFindPSM {
 
 	private String peptideSequence;
 	private Map<Integer,BigDecimal> modifications;
-	private Collection<String> proteinNames;
 
 	private boolean isDecoy;
-
-	@Override
-	public String toString() {
-		return "PFindPSM{" +
-				"qValue=" + qValue +
-				", massShift=" + massShift +
-				", rawScore=" + rawScore +
-				", finalScore=" + finalScore +
-				", avgFragMassShift=" + avgFragMassShift +
-				", specificity=" + specificity +
-				", scanNumber=" + scanNumber +
-				", precursorNeutralMass=" + precursorNeutralMass +
-				", charge=" + charge +
-				", peptideSequence='" + peptideSequence + '\'' +
-				", modifications=" + modifications +
-				", proteinNames=" + proteinNames +
-				", isDecoy=" + isDecoy +
-				'}';
-	}
 
 	public boolean isDecoy() {
 		return isDecoy;
@@ -52,14 +29,29 @@ public class PFindPSM {
 	}
 
 	@Override
+	public String toString() {
+		return "MetamorpheusPSM{" +
+				"qValue=" + qValue +
+				", massDiff=" + massDiff +
+				", score=" + score +
+				", scanNumber=" + scanNumber +
+				", precursorNeutralMass=" + precursorNeutralMass +
+				", charge=" + charge +
+				", peptideSequence='" + peptideSequence + '\'' +
+				", modifications=" + modifications +
+				", isDecoy=" + isDecoy +
+				'}';
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		PFindPSM pFindPSM = (PFindPSM) o;
-		return scanNumber == pFindPSM.scanNumber &&
-				charge == pFindPSM.charge &&
-				precursorNeutralMass.equals(pFindPSM.precursorNeutralMass) &&
-				peptideSequence.equals(pFindPSM.peptideSequence);
+		MetamorpheusPSM metamorpheusPSM = (MetamorpheusPSM) o;
+		return scanNumber == metamorpheusPSM.scanNumber &&
+				charge == metamorpheusPSM.charge &&
+				precursorNeutralMass.equals(metamorpheusPSM.precursorNeutralMass) &&
+				peptideSequence.equals(metamorpheusPSM.peptideSequence);
 	}
 
 	@Override
@@ -75,44 +67,20 @@ public class PFindPSM {
 		this.qValue = qValue;
 	}
 
-	public BigDecimal getMassShift() {
-		return massShift;
+	public BigDecimal getMassDiff() {
+		return massDiff;
 	}
 
-	public void setMassShift(BigDecimal massShift) {
-		this.massShift = massShift;
+	public void setMassDiff(BigDecimal massDiff) {
+		this.massDiff = massDiff;
 	}
 
-	public BigDecimal getRawScore() {
-		return rawScore;
+	public BigDecimal getScore() {
+		return score;
 	}
 
-	public void setRawScore(BigDecimal rawScore) {
-		this.rawScore = rawScore;
-	}
-
-	public BigDecimal getFinalScore() {
-		return finalScore;
-	}
-
-	public void setFinalScore(BigDecimal finalScore) {
-		this.finalScore = finalScore;
-	}
-
-	public BigDecimal getAvgFragMassShift() {
-		return avgFragMassShift;
-	}
-
-	public void setAvgFragMassShift(BigDecimal avgFragMassShift) {
-		this.avgFragMassShift = avgFragMassShift;
-	}
-
-	public int getSpecificity() {
-		return specificity;
-	}
-
-	public void setSpecificity(int specificity) {
-		this.specificity = specificity;
+	public void setScore(BigDecimal score) {
+		this.score = score;
 	}
 
 	public int getScanNumber() {
@@ -153,13 +121,5 @@ public class PFindPSM {
 
 	public void setModifications(Map<Integer, BigDecimal> modifications) {
 		this.modifications = modifications;
-	}
-
-	public Collection<String> getProteinNames() {
-		return proteinNames;
-	}
-
-	public void setProteinNames(Collection<String> proteinNames) {
-		this.proteinNames = proteinNames;
 	}
 }

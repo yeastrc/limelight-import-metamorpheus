@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-public class PFindReportedPeptide {
+public class MetamorpheusReportedPeptide {
 
 	@Override
 	public String toString() {
-		return "PFindReportedPeptide{" +
+		return "MetamorpheusReportedPeptide{" +
 				"reportedPeptideString='" + reportedPeptideString + '\'' +
 				", nakedPeptide='" + nakedPeptide + '\'' +
 				", mods=" + mods +
@@ -21,7 +21,7 @@ public class PFindReportedPeptide {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		PFindReportedPeptide that = (PFindReportedPeptide) o;
+		MetamorpheusReportedPeptide that = (MetamorpheusReportedPeptide) o;
 		return reportedPeptideString.equals(that.reportedPeptideString);
 	}
 

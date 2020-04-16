@@ -35,16 +35,13 @@ import picocli.CommandLine;
 		synopsisHeading = "%n",
 		descriptionHeading = "%n@|bold,underline Description:|@%n%n",
 		optionListHeading = "%n@|bold,underline Options:|@%n",
-		description = "Convert the results of an Open pFind analysis to a Limelight XML file suitable for import into Limelight.\n\n" +
+		description = "Convert the results of a MetaMorpheus analysis to a Limelight XML file suitable for import into Limelight.\n\n" +
 				"More info at: " + Constants.CONVERSION_PROGRAM_URI
 )
 public class MainProgram implements Runnable {
 
-	@CommandLine.Option(names = { "-d", "--directory" }, required = true, description = "Full path to the Open pFind output directory. E.g., c:\\my_data\\pFind3\\my_results  Should contain a \"param\" and \"result\" directory.")
-	private File pFindOutputDirectory;
-
-	@CommandLine.Option(names = { "-f", "--fasta-file" }, required = true, description = "Full path to FASTA file used in the experiment.")
-	private File fastaFile;
+	@CommandLine.Option(names = { "-m", "--mzid" }, required = true, description = "Full path to the location of the mzIdentML file (.mzid).")
+	private File mzidFile;
 
 	@CommandLine.Option(names = { "-o", "--out-file" }, required = true, description = "Full path to use for the Limelight XML output file (including file name).")
 	private String outFile;
@@ -58,26 +55,16 @@ public class MainProgram implements Runnable {
 
 		printRuntimeInfo();
 
-		if( !fastaFile.exists() ) {
-			System.err.println( "Could not find fasta file: " + fastaFile.getAbsolutePath() );
-			System.exit( 1 );
-		}
-
-		if( !pFindOutputDirectory.exists() ) {
-			System.err.println( "Could not find pFind directory: " + pFindOutputDirectory.getAbsolutePath() );
-			System.exit( 1 );
-		}
-
-		if( !pFindOutputDirectory.isDirectory() ) {
-			System.err.println( "pFind output directory isn't a directory: " + pFindOutputDirectory.getAbsolutePath() );
+		if( !mzidFile.exists() ) {
+			System.err.println( "Could not find pFind directory: " + mzidFile.getAbsolutePath() );
 			System.exit( 1 );
 		}
 
 		ConversionProgramInfo cpi = ConversionProgramInfo.createInstance( String.join( " ",  args ) );
-		ConversionParameters cp = new ConversionParameters(pFindOutputDirectory, fastaFile, outFile, cpi);
+		ConversionParameters cp = new ConversionParameters(mzidFile, outFile, cpi);
 
 		try {
-			ConverterRunner.createInstance().convertOpenPfindToLimelightXML(cp);
+			ConverterRunner.createInstance().convertToLimelightXML(cp);
 		} catch( Throwable t ) {
 
 			if(verboseRequested) {

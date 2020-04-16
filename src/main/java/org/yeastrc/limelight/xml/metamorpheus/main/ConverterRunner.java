@@ -28,20 +28,15 @@ public class ConverterRunner {
 	public static ConverterRunner createInstance() { return new ConverterRunner(); }
 	
 	
-	public void convertOpenPfindToLimelightXML(ConversionParameters conversionParameters ) throws Throwable {
+	public void convertToLimelightXML(ConversionParameters conversionParameters ) throws Throwable {
 
-		System.err.print( "\nLoading pFind results into memory..." );
-		PFindResults results = PFindResultsReader.getPFindResults( conversionParameters.getOpenPfindOutputDirectory() );
-		System.err.println( " Found " + results.getPeptidePSMMap().keySet().size() + " distinct peptides..." );
+		System.err.print( "\nLoading MetaMorpheus results into memory..." );
+		MetamorpheusResults results = MetamorpheusResultsReader.getResults( conversionParameters.getMzidFile() );
+		//System.err.println( " Found " + results.getPeptidePSMMap().keySet().size() + " distinct peptides..." );
 
-		System.err.print( "Performing FDR analysis of Final Scores..." );
-		TargetDecoyCounts tdCounts = TargetDecoyCountFactory.getTargetDecoyCountsByFinalScore( results );
-		TargetDecoyAnalysis tdAnalysis = TargetDecoyAnalysisFactory.createTargetDecoyAnalysis( tdCounts, TargetDecoyAnalysisFactory.LOWER_IS_BETTER );
-		System.err.println( " Done." );
-
-		System.err.print( "\nWriting out XML..." );
-		(new XMLBuilder()).buildAndSaveXML(conversionParameters, results, tdAnalysis);
-		System.err.println( " Done." );
+//		System.err.print( "\nWriting out XML..." );
+//		(new XMLBuilder()).buildAndSaveXML(conversionParameters, results, tdAnalysis);
+//		System.err.println( " Done." );
 
 	}
 }
