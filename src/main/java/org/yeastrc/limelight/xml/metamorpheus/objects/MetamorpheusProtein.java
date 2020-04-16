@@ -17,6 +17,14 @@ public class MetamorpheusProtein {
         return sequence;
     }
 
+    public Collection<Annotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Collection<Annotation> annotations) {
+        this.annotations = annotations;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -30,7 +38,7 @@ public class MetamorpheusProtein {
         return Objects.hash(sequence);
     }
 
-    private class Annotation {
+    public static class Annotation {
         private String name;
         private String description;
 

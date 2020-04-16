@@ -30,7 +30,7 @@ public class ConverterRunner {
 	
 	public void convertToLimelightXML(ConversionParameters conversionParameters ) throws Throwable {
 
-		System.err.print( "\nLoading MetaMorpheus results into memory..." );
+		System.err.println( "\nLoading MetaMorpheus results into memory...");
 		MetamorpheusResults results = MetamorpheusResultsReader.getResults( conversionParameters.getMzidFile() );
 		//System.err.println( " Found " + results.getPeptidePSMMap().keySet().size() + " distinct peptides..." );
 
