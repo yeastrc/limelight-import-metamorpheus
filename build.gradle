@@ -48,12 +48,12 @@ processResources {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'org.yeastrc.limelight.xml.open_pfind.main.MainProgram'
+        attributes 'Main-Class': 'org.yeastrc.limelight.xml.metamorpheus.main.MainProgram'
     }
 }
 
 shadowJar {
-    baseName = 'openPfind2LimelightXML'
+    baseName = 'metamorpheus2LimelightXML'
     classifier = null
     version = null
 }

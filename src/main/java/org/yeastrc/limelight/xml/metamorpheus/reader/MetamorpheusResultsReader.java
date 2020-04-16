@@ -1,6 +1,6 @@
 package org.yeastrc.limelight.xml.metamorpheus.reader;
 
-import info.psidev.psi.pi.mzidentml._1_1.*;
+import info.psidev.psi.pi.mzidentml._1.*;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusProtein;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusReportedPeptide;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusResults;
