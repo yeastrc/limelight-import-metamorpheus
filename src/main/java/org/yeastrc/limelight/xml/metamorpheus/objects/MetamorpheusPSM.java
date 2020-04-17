@@ -10,6 +10,7 @@ public class MetamorpheusPSM {
 	private BigDecimal qValue;
 	private BigDecimal massDiff;
 	private BigDecimal score;
+	private BigDecimal rank;
 
 	private int scanNumber;
 	private BigDecimal precursorNeutralMass;
@@ -34,6 +35,7 @@ public class MetamorpheusPSM {
 				"qValue=" + qValue +
 				", massDiff=" + massDiff +
 				", score=" + score +
+				", rank=" + rank +
 				", scanNumber=" + scanNumber +
 				", precursorNeutralMass=" + precursorNeutralMass +
 				", charge=" + charge +
@@ -49,6 +51,7 @@ public class MetamorpheusPSM {
 		if (o == null || getClass() != o.getClass()) return false;
 		MetamorpheusPSM metamorpheusPSM = (MetamorpheusPSM) o;
 		return scanNumber == metamorpheusPSM.scanNumber &&
+				rank == metamorpheusPSM.rank &&
 				charge == metamorpheusPSM.charge &&
 				precursorNeutralMass.equals(metamorpheusPSM.precursorNeutralMass) &&
 				peptideSequence.equals(metamorpheusPSM.peptideSequence);
@@ -56,7 +59,7 @@ public class MetamorpheusPSM {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(scanNumber, precursorNeutralMass, charge, peptideSequence);
+		return Objects.hash(scanNumber, rank, precursorNeutralMass, charge, peptideSequence);
 	}
 
 	public BigDecimal getqValue() {
@@ -121,5 +124,13 @@ public class MetamorpheusPSM {
 
 	public void setModifications(Map<Integer, BigDecimal> modifications) {
 		this.modifications = modifications;
+	}
+
+	public BigDecimal getRank() {
+		return rank;
+	}
+
+	public void setRank(BigDecimal rank) {
+		this.rank = rank;
 	}
 }

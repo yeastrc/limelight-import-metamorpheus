@@ -19,6 +19,7 @@
 package org.yeastrc.limelight.xml.metamorpheus.annotation;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class PSMAnnotationTypes {
 	public static final String ANNOTATION_TYPE_QVALUE = "q-value";
 	public static final String ANNOTATION_TYPE_SCORE = "score";
 	public static final String ANNOTATION_TYPE_MASS_DIFF = "mass diff.";
+	public static final String ANNOTATION_TYPE_RANK = "rank";
 
 	public static List<FilterablePsmAnnotationType> getFilterablePsmAnnotationTypes() {
 		List<FilterablePsmAnnotationType> types = new ArrayList<FilterablePsmAnnotationType>();
@@ -49,7 +51,7 @@ public class PSMAnnotationTypes {
 		{
 			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
 			type.setName( ANNOTATION_TYPE_SCORE );
-			type.setDescription( "Raw Score" );
+			type.setDescription( "Metamorpheus score" );
 			type.setFilterDirection( FilterDirectionType.ABOVE );
 
 			types.add( type );
@@ -58,8 +60,18 @@ public class PSMAnnotationTypes {
 		{
 			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
 			type.setName( ANNOTATION_TYPE_MASS_DIFF );
-			type.setDescription( "Final Score" );
+			type.setDescription( "Observed m/z - expected m/z" );
 			type.setFilterDirection( FilterDirectionType.BELOW );
+
+			types.add( type );
+		}
+
+		{
+			FilterablePsmAnnotationType type = new FilterablePsmAnnotationType();
+			type.setName( ANNOTATION_TYPE_RANK );
+			type.setDescription( "Rank of this PSM for this scan" );
+			type.setFilterDirection( FilterDirectionType.BELOW );
+			type.setDefaultFilterValue(new BigDecimal("1").setScale(0, RoundingMode.HALF_UP));
 
 			types.add( type );
 		}

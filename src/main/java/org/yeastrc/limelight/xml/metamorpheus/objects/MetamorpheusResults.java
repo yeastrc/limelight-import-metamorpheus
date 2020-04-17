@@ -1,5 +1,6 @@
 package org.yeastrc.limelight.xml.metamorpheus.objects;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 
@@ -7,7 +8,7 @@ public class MetamorpheusResults {
 
 	private Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> peptidePSMMap;
 	private Map<String, MetamorpheusProtein> proteinsMap;
-	private Collection<String> staticMods;
+	private Map<String, BigDecimal> staticMods;
 	private String version;
 
 	public String getVersion() {
@@ -34,11 +35,11 @@ public class MetamorpheusResults {
 		this.proteinsMap = proteinsMap;
 	}
 
-	public Collection<String> getStaticMods() {
+	public Map<String, BigDecimal> getStaticMods() {
 		return staticMods;
 	}
 
-	public void setStaticMods(Collection<String> staticMods) {
+	public void setStaticMods(Map<String, BigDecimal> staticMods) {
 		this.staticMods = staticMods;
 	}
 }

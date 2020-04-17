@@ -54,6 +54,13 @@ public class PSMDefaultVisibleAnnotationTypes {
 			annotations.add( annotation );
 		}
 
+		{
+			SearchAnnotation annotation = new SearchAnnotation();
+			annotation.setAnnotationName( PSMAnnotationTypes.ANNOTATION_TYPE_RANK );
+			annotation.setSearchProgram( Constants.PROGRAM_NAME );
+			annotations.add( annotation );
+		}
+
 		return annotations;
 	}
 	

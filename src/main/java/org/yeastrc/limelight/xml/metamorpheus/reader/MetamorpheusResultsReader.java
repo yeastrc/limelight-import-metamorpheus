@@ -12,7 +12,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MetamorpheusResultsReader {
 
@@ -21,23 +24,33 @@ public class MetamorpheusResultsReader {
         MzIdentMLType mzIdentML = getMzIdentML(mzidFile);
 
         String version = mzIdentML.getAnalysisSoftwareList().getAnalysisSoftware().get(0).getVersion();
-        System.out.println("\tMetaMorpheus version: " + version);
+        System.err.println("\tMetaMorpheus version: " + version);
 
         Map<String, BigDecimal> staticMods = getStaticMods(mzIdentML);
-        System.out.println("\tFound " + staticMods.size() + " static mods.");
+        System.err.println("\tFound " + staticMods.size() + " static mods.");
 
         // A map of proteins parsed from the mzIdentML, keyed by DBSequence.id
         Map<String, MetamorpheusProtein> proteinMap = getProteins(mzIdentML);
-        System.out.println("\tFound " + proteinMap.size() + " protein identifications.");
+        System.err.println("\tFound " + proteinMap.size() + " protein identifications.");
 
         // A map of peptides parsed from the mzIdentML, keyed by Peptide.id in that file
         Map<String, MetamorpheusReportedPeptide> reportedPeptideMap = getPeptides(mzIdentML);
-        System.out.println("\tFound " + reportedPeptideMap.size() + " distinct peptide ids.");
+        System.err.println("\tFound " + reportedPeptideMap.size() + " distinct peptide ids.");
 
+        System.err.print("\tReading PSMs... ");
         Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> psmPeptideMap = getPSMPeptideMap(mzIdentML, reportedPeptideMap);
+        System.err.println("Done.");
+
+        System.err.println("Done reading .mzid file.");
 
 
-        return null;
+        MetamorpheusResults results = new MetamorpheusResults();
+        results.setPeptidePSMMap( psmPeptideMap );
+        results.setProteinsMap( proteinMap );
+        results.setStaticMods( staticMods );
+        results.setVersion( version );
+
+        return results;
     }
 
     private static Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> getPSMPeptideMap(MzIdentMLType mzIdentML,
@@ -46,8 +59,73 @@ public class MetamorpheusResultsReader {
         Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> psmPeptideMap = new HashMap<>();
         SpectrumIdentificationListType spectrumIdentificationList = getSpectrumIdentificationList(mzIdentML);
 
+        for(SpectrumIdentificationResultType result : spectrumIdentificationList.getSpectrumIdentificationResult()) {
+            int scanNumber = getScanNumberFromSpectrumID(result.getSpectrumID());
+
+            for(SpectrumIdentificationItemType item : result.getSpectrumIdentificationItem()) {
+
+                MetamorpheusReportedPeptide reportedPeptide = reportedPeptideMap.get(item.getPeptideRef());
+                if(reportedPeptide == null) {
+                    throw new Exception("Could not find reported peptide for MetaMorpheus PSM " + item.getId());
+                }
+
+                int charge = item.getChargeState();
+                int rank = item.getRank();
+                BigDecimal obsMZ = BigDecimal.valueOf(item.getExperimentalMassToCharge());
+                BigDecimal calcMZ = BigDecimal.valueOf(item.getCalculatedMassToCharge());
+                BigDecimal massDiff = obsMZ.subtract(calcMZ);
+
+                BigDecimal score = null;
+                BigDecimal qvalue = null;
+
+                for( AbstractParamType cv : item.getParamGroup()) {
+                    String name = cv.getName();
+                    if(name.equals( "MetaMorpheus:score" ) ) {
+                        score = new BigDecimal(cv.getValue());
+                    } else if(name.equals( "PSM-level q-value" ) ) {
+                        qvalue = new BigDecimal(cv.getValue());
+                    }
+                }
+
+                if(score == null) {
+                    throw new Exception("Could not find score for MetaMorpheus PSM " + item.getId());
+                }
+                if(qvalue == null) {
+                    throw new Exception("Could not find q-value for MetaMorpheus PSM " + item.getId());
+                }
+
+                MetamorpheusPSM psm = new MetamorpheusPSM();
+                psm.setCharge(charge);
+                psm.setDecoy(false);
+                psm.setMassDiff(massDiff);
+                psm.setPeptideSequence(reportedPeptide.getNakedPeptide());
+                psm.setPrecursorNeutralMass(obsMZ);
+                psm.setqValue(qvalue);
+                psm.setRank(BigDecimal.valueOf(rank).setScale(0, RoundingMode.HALF_UP));
+                psm.setScanNumber(scanNumber);
+                psm.setScore(score);
+
+                if(!psmPeptideMap.containsKey(reportedPeptide)) {
+                    psmPeptideMap.put(reportedPeptide, new HashSet<>());
+                }
+
+                psmPeptideMap.get(reportedPeptide).add(psm);
+            }
+        }
+
 
         return psmPeptideMap;
+    }
+
+    private static int getScanNumberFromSpectrumID(String spectrumID) throws Exception {
+        Pattern p = Pattern.compile("^.+ scan=(\\d+)$");
+        Matcher m = p.matcher(spectrumID);
+
+        if(!m.matches()) {
+            throw new Exception("Could not parse scan number from " + spectrumID);
+        }
+
+        return Integer.parseInt(m.group(1));
     }
 
     private static SpectrumIdentificationListType getSpectrumIdentificationList(MzIdentMLType mzIdentML) throws Exception {
