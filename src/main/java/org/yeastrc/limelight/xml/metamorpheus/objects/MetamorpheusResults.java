@@ -10,6 +10,15 @@ public class MetamorpheusResults {
 	private Map<String, MetamorpheusProtein> proteinsMap;
 	private Map<String, BigDecimal> staticMods;
 	private String version;
+	private String searchDatabase;
+
+	public String getSearchDatabase() {
+		return searchDatabase;
+	}
+
+	public void setSearchDatabase(String searchDatabase) {
+		this.searchDatabase = searchDatabase;
+	}
 
 	public String getVersion() {
 		return version;

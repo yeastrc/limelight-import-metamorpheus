@@ -49,8 +49,24 @@ public class MetamorpheusResultsReader {
         results.setProteinsMap( proteinMap );
         results.setStaticMods( staticMods );
         results.setVersion( version );
+        results.setSearchDatabase(getSearchDatabase(mzIdentML));
 
         return results;
+    }
+
+    private static String getSearchDatabase(MzIdentMLType mzIdentML) {
+
+        String searchDatabase = "Unknown";
+
+        try {
+
+            searchDatabase = (new File(mzIdentML.getDataCollection().getInputs().getSearchDatabase().get(0).getLocation()).getName());
+
+        } catch(Throwable t) {
+            ;
+        }
+
+        return searchDatabase;
     }
 
     private static Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> getPSMPeptideMap(MzIdentMLType mzIdentML,
@@ -65,8 +81,10 @@ public class MetamorpheusResultsReader {
             for(SpectrumIdentificationItemType item : result.getSpectrumIdentificationItem()) {
 
                 MetamorpheusReportedPeptide reportedPeptide = reportedPeptideMap.get(item.getPeptideRef());
+
+                // this PSM matches a peptide that didn't map to a target--it's a decoy
                 if(reportedPeptide == null) {
-                    throw new Exception("Could not find reported peptide for MetaMorpheus PSM " + item.getId());
+                    continue;
                 }
 
                 int charge = item.getChargeState();
@@ -154,6 +172,12 @@ public class MetamorpheusResultsReader {
 
         SequenceCollectionType sequenceCollection = getSequenceCollection(mzIdentML);
         for(PeptideType peptide : sequenceCollection.getPeptide()) {
+
+            // this peptide didn't map to any non decoy proteins, skip it
+            if(!pepEvidenceMap.containsKey(peptide.getId())) {
+                continue;
+            }
+
             MetamorpheusReportedPeptide metamorpheusReportedPeptide = getReportedPeptide(peptide, pepEvidenceMap);
             peptideMap.put(peptide.getId(), metamorpheusReportedPeptide);
         }
@@ -188,6 +212,11 @@ public class MetamorpheusResultsReader {
 
         SequenceCollectionType sequenceCollection = getSequenceCollection(mzIdentML);
         for(PeptideEvidenceType peptideEvidence : sequenceCollection.getPeptideEvidence()) {
+            // do not include decoys
+            if(peptideEvidence.isIsDecoy()) {
+                continue;
+            }
+
             String pepRef = peptideEvidence.getPeptideRef();
             String protRef = peptideEvidence.getDBSequenceRef();
 

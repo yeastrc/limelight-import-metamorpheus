@@ -32,11 +32,10 @@ public class ConverterRunner {
 
 		System.err.println( "\nLoading MetaMorpheus results into memory...");
 		MetamorpheusResults results = MetamorpheusResultsReader.getResults( conversionParameters.getMzidFile() );
-		//System.err.println( " Found " + results.getPeptidePSMMap().keySet().size() + " distinct peptides..." );
 
-//		System.err.print( "\nWriting out XML..." );
-//		(new XMLBuilder()).buildAndSaveXML(conversionParameters, results, tdAnalysis);
-//		System.err.println( " Done." );
+		System.err.print( "\nWriting out XML..." );
+		(new XMLBuilder()).buildAndSaveXML(conversionParameters, results);
+		System.err.println( " Done." );
 
 	}
 }
