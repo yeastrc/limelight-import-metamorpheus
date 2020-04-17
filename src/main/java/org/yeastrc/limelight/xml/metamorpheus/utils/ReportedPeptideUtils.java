@@ -10,24 +10,13 @@ import java.util.Map;
 
 public class ReportedPeptideUtils {
 
-    public static MetamorpheusReportedPeptide getReportedPeptide(String peptideSequence, Map<Integer, BigDecimal> mods) {
-
-        MetamorpheusReportedPeptide reportedPeptide = new MetamorpheusReportedPeptide();
-
-        reportedPeptide.setMods( mods );
-        reportedPeptide.setNakedPeptide( peptideSequence );
-        reportedPeptide.setReportedPeptideString( ReportedPeptideUtils.getReportedPeptideString(peptideSequence, mods ));
-
-        return reportedPeptide;
-    }
-
     /**
      * Get the string representation of a reported peptide in the form of: PEP[21.2933]TIDE
      * @param peptideSequence
      * @param mods
      * @return
      */
-    private static String getReportedPeptideString(String peptideSequence, Map<Integer, BigDecimal> mods ) {
+    public static String getReportedPeptideString(String peptideSequence, Map<Integer, BigDecimal> mods ) {
 
         if( mods == null || mods.size() < 1 )
             return peptideSequence;

@@ -1,9 +1,11 @@
 package org.yeastrc.limelight.xml.metamorpheus.reader;
 
 import info.psidev.psi.pi.mzidentml._1.*;
+import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusPSM;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusProtein;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusReportedPeptide;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusResults;
+import org.yeastrc.limelight.xml.metamorpheus.utils.ReportedPeptideUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -29,19 +31,78 @@ public class MetamorpheusResultsReader {
         System.out.println("\tFound " + proteinMap.size() + " protein identifications.");
 
         // A map of peptides parsed from the mzIdentML, keyed by Peptide.id in that file
-        Map<String, MetamorpheusReportedPeptide> reportedPeptideMap = new HashMap<>();
+        Map<String, MetamorpheusReportedPeptide> reportedPeptideMap = getPeptides(mzIdentML);
+        System.out.println("\tFound " + reportedPeptideMap.size() + " distinct peptide ids.");
+
+        Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> psmPeptideMap = getPSMPeptideMap(mzIdentML, reportedPeptideMap);
 
 
         return null;
+    }
+
+    private static Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> getPSMPeptideMap(MzIdentMLType mzIdentML,
+                                                                                                  Map<String, MetamorpheusReportedPeptide> reportedPeptideMap) throws Exception {
+
+        Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> psmPeptideMap = new HashMap<>();
+        SpectrumIdentificationListType spectrumIdentificationList = getSpectrumIdentificationList(mzIdentML);
+
+
+        return psmPeptideMap;
+    }
+
+    private static SpectrumIdentificationListType getSpectrumIdentificationList(MzIdentMLType mzIdentML) throws Exception {
+
+        DataCollectionType dataCollection = mzIdentML.getDataCollection();
+        if(dataCollection == null) {
+            throw new Exception("Could not find DataCollection element.");
+        }
+
+        AnalysisDataType analysisData = dataCollection.getAnalysisData();
+        if(analysisData == null) {
+            throw new Exception("Could not find AnalysisData element.");
+        }
+
+        SpectrumIdentificationListType spectrumIdentificationList = analysisData.getSpectrumIdentificationList().get(0);    // assume only one spectrum identification list
+        if(spectrumIdentificationList == null) {
+            throw new Exception("Could not find SpectrumIdentificationList element.");
+        }
+
+        return spectrumIdentificationList;
     }
 
     private static Map<String, MetamorpheusReportedPeptide> getPeptides(MzIdentMLType mzIdentML) throws Exception {
         Map<String, MetamorpheusReportedPeptide> peptideMap = new HashMap<>();
         Map<String, Collection<String>> pepEvidenceMap = getPeptideEvidenceMap(mzIdentML);
 
-
+        SequenceCollectionType sequenceCollection = getSequenceCollection(mzIdentML);
+        for(PeptideType peptide : sequenceCollection.getPeptide()) {
+            MetamorpheusReportedPeptide metamorpheusReportedPeptide = getReportedPeptide(peptide, pepEvidenceMap);
+            peptideMap.put(peptide.getId(), metamorpheusReportedPeptide);
+        }
 
         return peptideMap;
+    }
+
+    private static MetamorpheusReportedPeptide getReportedPeptide(PeptideType peptide, Map<String, Collection<String>> pepEvidenceMap) {
+        MetamorpheusReportedPeptide reportedPeptide = new MetamorpheusReportedPeptide();
+        Map<Integer, BigDecimal> mods = getDynamicMods(peptide);
+
+        reportedPeptide.setNakedPeptide(peptide.getPeptideSequence());
+        reportedPeptide.setMods(mods);
+        reportedPeptide.setReportedPeptideString(ReportedPeptideUtils.getReportedPeptideString(peptide.getPeptideSequence(), mods));
+        reportedPeptide.setProteinMatches(pepEvidenceMap.get(peptide.getId()));
+
+        return reportedPeptide;
+    }
+
+    private static Map<Integer, BigDecimal> getDynamicMods(PeptideType peptide) {
+        Map<Integer, BigDecimal> mods = new HashMap<>();
+
+        for(ModificationType mod : peptide.getModification()) {
+            mods.put(mod.getLocation(), BigDecimal.valueOf(mod.getMonoisotopicMassDelta()));
+        }
+
+        return mods;
     }
 
     private static Map<String, Collection<String>> getPeptideEvidenceMap(MzIdentMLType mzIdentML) throws Exception {
