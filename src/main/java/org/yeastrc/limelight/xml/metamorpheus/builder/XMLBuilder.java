@@ -249,21 +249,20 @@ public class XMLBuilder {
 		}//end iterating over reported peptides
 
 
+		if(conversionParameters.getTomlFiles() != null && conversionParameters.getTomlFiles().size() > 0) {
+			// add in the config files
+			ConfigurationFiles xmlConfigurationFiles = new ConfigurationFiles();
+			limelightInputRoot.setConfigurationFiles( xmlConfigurationFiles );
 
-		// add in the output log file(s)
-//		ConfigurationFiles xmlConfigurationFiles = new ConfigurationFiles();
-//		limelightInputRoot.setConfigurationFiles( xmlConfigurationFiles );
-//
-//		{
-//			ConfigurationFile xmlConfigurationFile = new ConfigurationFile();
-//			xmlConfigurationFiles.getConfigurationFile().add(xmlConfigurationFile);
-//
-//			File paramsFile = PFindParamsFileReader.getParamsFile(conversionParameters.getOpenPfindOutputDirectory());
-//
-//			xmlConfigurationFile.setSearchProgram(Constants.PROGRAM_NAME_PFIND);
-//			xmlConfigurationFile.setFileName(paramsFile.getName());
-//			xmlConfigurationFile.setFileContent(Files.readAllBytes(FileSystems.getDefault().getPath(paramsFile.getAbsolutePath())));
-//		}
+			for(File tomlFile : conversionParameters.getTomlFiles() ) {
+				ConfigurationFile xmlConfigurationFile = new ConfigurationFile();
+				xmlConfigurationFiles.getConfigurationFile().add(xmlConfigurationFile);
+
+				xmlConfigurationFile.setSearchProgram(Constants.PROGRAM_NAME);
+				xmlConfigurationFile.setFileName(tomlFile.getName());
+				xmlConfigurationFile.setFileContent(Files.readAllBytes(FileSystems.getDefault().getPath(tomlFile.getAbsolutePath())));
+			}
+		}
 
 		//make the xml file
 		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( new File(conversionParameters.getOutputFilePath() ), limelightInputRoot);

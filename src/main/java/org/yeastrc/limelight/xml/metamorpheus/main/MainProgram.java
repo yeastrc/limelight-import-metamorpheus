@@ -21,6 +21,7 @@ package org.yeastrc.limelight.xml.metamorpheus.main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import org.yeastrc.limelight.xml.metamorpheus.constants.Constants;
 import org.yeastrc.limelight.xml.metamorpheus.objects.ConversionParameters;
@@ -46,6 +47,9 @@ public class MainProgram implements Runnable {
 	@CommandLine.Option(names = { "-o", "--out-file" }, required = true, description = "Full path to use for the Limelight XML output file (including file name).")
 	private String outFile;
 
+	@CommandLine.Option(names = { "-t", "--toml" }, required = false, description = "[Optional] Specify one or more toml config files to include in the limelight XML file. Specify a -t for each toml.")
+	private List<File> tomlFiles;
+
 	@CommandLine.Option(names = { "-v", "--verbose" }, required = false, description = "If this parameter is present, error messages will include a full stacktrace. Helpful for debugging.")
 	private boolean verboseRequested = false;
 
@@ -60,8 +64,17 @@ public class MainProgram implements Runnable {
 			System.exit( 1 );
 		}
 
+		if(tomlFiles != null && tomlFiles.size() > 0) {
+			for(File tomlFile : tomlFiles) {
+				if( !tomlFile.exists() ) {
+					System.err.println( "Could not find .toml file: " + tomlFile.getAbsolutePath() );
+					System.exit( 1 );
+				}
+			}
+		}
+
 		ConversionProgramInfo cpi = ConversionProgramInfo.createInstance( String.join( " ",  args ) );
-		ConversionParameters cp = new ConversionParameters(mzidFile, outFile, cpi);
+		ConversionParameters cp = new ConversionParameters(mzidFile, outFile, cpi, tomlFiles);
 
 		try {
 			ConverterRunner.createInstance().convertToLimelightXML(cp);
