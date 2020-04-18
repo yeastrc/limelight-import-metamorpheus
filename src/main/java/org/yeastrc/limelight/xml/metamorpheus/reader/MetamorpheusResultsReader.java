@@ -34,7 +34,7 @@ public class MetamorpheusResultsReader {
         System.err.println("\tFound " + proteinMap.size() + " protein identifications.");
 
         // A map of peptides parsed from the mzIdentML, keyed by Peptide.id in that file
-        Map<String, MetamorpheusReportedPeptide> reportedPeptideMap = getPeptides(mzIdentML);
+        Map<String, MetamorpheusReportedPeptide> reportedPeptideMap = getPeptides(mzIdentML, staticMods);
         System.err.println("\tFound " + reportedPeptideMap.size() + " distinct peptide ids.");
 
         System.err.print("\tReading PSMs... ");
@@ -175,7 +175,7 @@ public class MetamorpheusResultsReader {
         return spectrumIdentificationList;
     }
 
-    private static Map<String, MetamorpheusReportedPeptide> getPeptides(MzIdentMLType mzIdentML) throws Exception {
+    private static Map<String, MetamorpheusReportedPeptide> getPeptides(MzIdentMLType mzIdentML, Map<String, BigDecimal> staticMods) throws Exception {
         Map<String, MetamorpheusReportedPeptide> peptideMap = new HashMap<>();
         Map<String, Collection<String>> pepEvidenceMap = getPeptideEvidenceMap(mzIdentML);
 
@@ -187,16 +187,16 @@ public class MetamorpheusResultsReader {
                 continue;
             }
 
-            MetamorpheusReportedPeptide metamorpheusReportedPeptide = getReportedPeptide(peptide, pepEvidenceMap);
+            MetamorpheusReportedPeptide metamorpheusReportedPeptide = getReportedPeptide(peptide, pepEvidenceMap, staticMods);
             peptideMap.put(peptide.getId(), metamorpheusReportedPeptide);
         }
 
         return peptideMap;
     }
 
-    private static MetamorpheusReportedPeptide getReportedPeptide(PeptideType peptide, Map<String, Collection<String>> pepEvidenceMap) {
+    private static MetamorpheusReportedPeptide getReportedPeptide(PeptideType peptide, Map<String, Collection<String>> pepEvidenceMap, Map<String, BigDecimal> staticMods) {
         MetamorpheusReportedPeptide reportedPeptide = new MetamorpheusReportedPeptide();
-        Map<Integer, BigDecimal> mods = getDynamicMods(peptide);
+        Map<Integer, BigDecimal> mods = getDynamicMods(peptide, staticMods);
 
         reportedPeptide.setNakedPeptide(peptide.getPeptideSequence());
         reportedPeptide.setMods(mods);
@@ -206,15 +206,28 @@ public class MetamorpheusResultsReader {
         return reportedPeptide;
     }
 
-    private static Map<Integer, BigDecimal> getDynamicMods(PeptideType peptide) {
+    private static Map<Integer, BigDecimal> getDynamicMods(PeptideType peptide, Map<String, BigDecimal> staticMods) {
         Map<Integer, BigDecimal> mods = new HashMap<>();
 
         for(ModificationType mod : peptide.getModification()) {
-            mods.put(mod.getLocation(), BigDecimal.valueOf(mod.getMonoisotopicMassDelta()));
+
+            String peptideSequence = peptide.getPeptideSequence();
+            int position = mod.getLocation();
+            String moddedResidue = peptideSequence.substring(position - 1, position);
+            BigDecimal moddedMass = BigDecimal.valueOf(mod.getMonoisotopicMassDelta());
+
+            if(!staticMods.containsKey(moddedResidue) || !bigDecimalsAreEqual(staticMods.get(moddedResidue), moddedMass, 3)) {
+                mods.put(mod.getLocation(), BigDecimal.valueOf(mod.getMonoisotopicMassDelta()));
+            }
         }
 
         return mods;
     }
+
+    private static boolean bigDecimalsAreEqual(BigDecimal bd1, BigDecimal bd2, int scale) {
+        return bd1.setScale(scale, RoundingMode.HALF_UP).equals(bd2.setScale(scale, RoundingMode.HALF_UP));
+    }
+
 
     private static Map<String, Collection<String>> getPeptideEvidenceMap(MzIdentMLType mzIdentML) throws Exception {
         Map<String, Collection<String>> pepEvidenceMap = new HashMap<>();
