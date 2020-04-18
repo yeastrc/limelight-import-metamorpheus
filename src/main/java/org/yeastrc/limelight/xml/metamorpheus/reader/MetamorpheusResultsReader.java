@@ -90,8 +90,7 @@ public class MetamorpheusResultsReader {
                 int charge = item.getChargeState();
                 int rank = item.getRank();
                 BigDecimal obsMZ = BigDecimal.valueOf(item.getExperimentalMassToCharge());
-                BigDecimal calcMZ = BigDecimal.valueOf(item.getCalculatedMassToCharge());
-                BigDecimal massDiff = obsMZ.subtract(calcMZ);
+                BigDecimal massDiff = BigDecimal.valueOf(getMassDiff(item.getExperimentalMassToCharge(), item.getCalculatedMassToCharge(), charge)).setScale(4, RoundingMode.HALF_UP);
 
                 BigDecimal score = null;
                 BigDecimal qvalue = null;
@@ -133,6 +132,16 @@ public class MetamorpheusResultsReader {
 
 
         return psmPeptideMap;
+    }
+
+    private static double getMassDiff(double observedMz, double expectedMz, int charge) {
+        double MASS_HYDROGEN = 	1.007825035;
+        double subtractedHydrogenMasses = MASS_HYDROGEN * charge;
+
+        double neutralObservedMass = observedMz * charge - subtractedHydrogenMasses;
+        double neutralExpectedMass = expectedMz * charge - subtractedHydrogenMasses;
+
+        return neutralObservedMass - neutralExpectedMass;
     }
 
     private static int getScanNumberFromSpectrumID(String spectrumID) throws Exception {
