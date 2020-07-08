@@ -22,6 +22,8 @@ import org.yeastrc.limelight.xml.metamorpheus.builder.XMLBuilder;
 import org.yeastrc.limelight.xml.metamorpheus.objects.*;
 import org.yeastrc.limelight.xml.metamorpheus.reader.*;
 
+import java.io.File;
+
 public class ConverterRunner {
 
 	// conveniently get a new instance of this class
@@ -35,6 +37,10 @@ public class ConverterRunner {
 
 		System.err.print( "\nWriting out XML..." );
 		(new XMLBuilder()).buildAndSaveXML(conversionParameters, results);
+		System.err.println( " Done." );
+
+		System.err.print( "Validating Limelight XML..." );
+		LimelightXMLValidator.validateLimelightXML(new File(conversionParameters.getOutputFilePath()));
 		System.err.println( " Done." );
 
 	}
