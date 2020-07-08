@@ -5,6 +5,7 @@ import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusPSM;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusProtein;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusReportedPeptide;
 import org.yeastrc.limelight.xml.metamorpheus.objects.MetamorpheusResults;
+import org.yeastrc.limelight.xml.metamorpheus.utils.ProteinUtils;
 import org.yeastrc.limelight.xml.metamorpheus.utils.ReportedPeptideUtils;
 
 import javax.xml.bind.JAXBContext;
@@ -267,7 +268,8 @@ public class MetamorpheusResultsReader {
             String id = dbSequence.getId();
             String sequence = dbSequence.getSeq();
 
-            proteinMap.put(id, sequence);
+            if(!ProteinUtils.isIdDecoy(id))
+                proteinMap.put(id, sequence);
         }
 
         return proteinMap;
@@ -283,6 +285,11 @@ public class MetamorpheusResultsReader {
             String name = dbSequence.getName();
             String accession = dbSequence.getAccession();
             String sequence = dbSequence.getSeq();
+
+            // don't include decoys
+            if(ProteinUtils.isNameDecoy(accession)) {
+                continue;
+            }
 
             MetamorpheusProtein.Annotation anno = new MetamorpheusProtein.Annotation();
             anno.setDescription( name );

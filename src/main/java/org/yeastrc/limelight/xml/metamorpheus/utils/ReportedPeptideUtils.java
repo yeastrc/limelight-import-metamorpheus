@@ -59,16 +59,4 @@ public class ReportedPeptideUtils {
         return sb.toString();
     }
 
-    public static boolean reportedPeptideOnlyContainsDecoys(MetamorpheusResults pfindResults, MetamorpheusReportedPeptide pfindReportedPeptide ) {
-
-        for(MetamorpheusPSM psm : pfindResults.getPeptidePSMMap().get(pfindReportedPeptide)) {
-
-            if( !psm.isDecoy() ) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
 }

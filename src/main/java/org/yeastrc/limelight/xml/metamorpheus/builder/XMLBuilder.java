@@ -126,7 +126,7 @@ public class XMLBuilder {
 		for( MetamorpheusReportedPeptide metamorpheusReportedPeptide : results.getPeptidePSMMap().keySet() ) {
 
 			// skip this if it only contains decoys
-			if(ReportedPeptideUtils.reportedPeptideOnlyContainsDecoys(results, metamorpheusReportedPeptide)) {
+			if(!peptideHasProteins(metamorpheusReportedPeptide, results)) {
 				continue;
 			}
 
@@ -269,6 +269,17 @@ public class XMLBuilder {
 		//make the xml file
 		CreateImportFileFromJavaObjectsMain.getInstance().createImportFileFromJavaObjectsMain( new File(conversionParameters.getOutputFilePath() ), limelightInputRoot);
 
+	}
+
+	private boolean peptideHasProteins(MetamorpheusReportedPeptide metamorpheusReportedPeptide, MetamorpheusResults results) {
+
+		for( String proteinId : metamorpheusReportedPeptide.getProteinMatches() ) {
+			if(results.getProteinsIdSequenceMap().containsKey( proteinId ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 }
