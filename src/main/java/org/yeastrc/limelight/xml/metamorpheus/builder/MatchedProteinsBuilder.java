@@ -32,28 +32,22 @@ public class MatchedProteinsBuilder {
 	public static MatchedProteinsBuilder getInstance() { return new MatchedProteinsBuilder(); }
 
 
-	public Map<String, Integer> buildMatchedProteins(LimelightInput limelightInputRoot, Map<String, MetamorpheusProtein> proteinMap) throws Exception {
+	public void buildMatchedProteins(LimelightInput limelightInputRoot, Map<String, MetamorpheusProtein> proteinSequenceProteinMap) throws Exception {
 		
 		System.err.print( " Matching peptides to proteins..." );
-
-		// map and validate protein names to protein sequence ids
-		Map<String, Integer> proteinNameIdMap = new HashMap<>();
 
 		MatchedProteins xmlMatchedProteins = new MatchedProteins();
 		limelightInputRoot.setMatchedProteins( xmlMatchedProteins );
 
-		int counter = 0;
-		for( String proteinId : proteinMap.keySet() ) {
+		for( String sequence : proteinSequenceProteinMap.keySet() ) {
 
-			proteinNameIdMap.put(proteinId, counter);
-
-			MetamorpheusProtein protein = proteinMap.get(proteinId);
+			MetamorpheusProtein protein = proteinSequenceProteinMap.get(sequence);
 
 			MatchedProtein xmlProtein = new MatchedProtein();
 			xmlMatchedProteins.getMatchedProtein().add( xmlProtein );
 
 			xmlProtein.setSequence( protein.getSequence() );
-			xmlProtein.setId( BigInteger.valueOf(counter));
+			xmlProtein.setId( BigInteger.valueOf(protein.getUniqueId()));
 
 			for( MetamorpheusProtein.Annotation anno : protein.getAnnotations() ) {
 				MatchedProteinLabel xmlMatchedProteinLabel = new MatchedProteinLabel();
@@ -64,11 +58,7 @@ public class MatchedProteinsBuilder {
 				if( anno.getDescription() != null )
 					xmlMatchedProteinLabel.setDescription( anno.getDescription() );
 			}
-
-			counter++;
 		}
-
-		return proteinNameIdMap;
 	}
 	
 }

@@ -110,9 +110,9 @@ public class XMLBuilder {
 		//
 		// Build MatchedProteins section and get map of protein names to MatchedProtein ids
 		//
-		Map<String, Integer> proteinNameIds = MatchedProteinsBuilder.getInstance().buildMatchedProteins(
+		MatchedProteinsBuilder.getInstance().buildMatchedProteins(
 				limelightInputRoot,
-				results.getProteinsMap()
+				results.getProteinsSequenceProteinMap()
 		);
 
 
@@ -143,11 +143,13 @@ public class XMLBuilder {
 
 			// add in protein inference info
 			int proteinCount = 0;
-			for( String proteinName : metamorpheusReportedPeptide.getProteinMatches() ) {
+			for( String proteinId : metamorpheusReportedPeptide.getProteinMatches() ) {
 
-				if(proteinNameIds.containsKey( proteinName ) ) {
+				if(results.getProteinsIdSequenceMap().containsKey( proteinId ) ) {
 					proteinCount++;
-					int matchedProteinId = proteinNameIds.get(proteinName);
+
+					MetamorpheusProtein matchedProtein = results.getProteinsSequenceProteinMap().get(results.getProteinsIdSequenceMap().get(proteinId));
+					int matchedProteinId = matchedProtein.getUniqueId();
 
 					MatchedProteinForPeptide xProteinForPeptide = new MatchedProteinForPeptide();
 					xProteinsForPeptide.getMatchedProteinForPeptide().add(xProteinForPeptide);

@@ -7,7 +7,10 @@ import java.util.Map;
 public class MetamorpheusResults {
 
 	private Map<MetamorpheusReportedPeptide, Collection<MetamorpheusPSM>> peptidePSMMap;
-	private Map<String, MetamorpheusProtein> proteinsMap;
+
+	private Map<String, String> proteinsIdSequenceMap;
+	private Map<String, MetamorpheusProtein> proteinsSequenceProteinMap;
+
 	private Map<String, BigDecimal> staticMods;
 	private String version;
 	private String searchDatabase;
@@ -36,12 +39,20 @@ public class MetamorpheusResults {
 		this.peptidePSMMap = peptidePSMMap;
 	}
 
-	public Map<String, MetamorpheusProtein> getProteinsMap() {
-		return proteinsMap;
+	public Map<String, String> getProteinsIdSequenceMap() {
+		return proteinsIdSequenceMap;
 	}
 
-	public void setProteinsMap(Map<String, MetamorpheusProtein> proteinsMap) {
-		this.proteinsMap = proteinsMap;
+	public void setProteinsIdSequenceMap(Map<String, String> proteinsIdSequenceMap) {
+		this.proteinsIdSequenceMap = proteinsIdSequenceMap;
+	}
+
+	public Map<String, MetamorpheusProtein> getProteinsSequenceProteinMap() {
+		return proteinsSequenceProteinMap;
+	}
+
+	public void setProteinsSequenceProteinMap(Map<String, MetamorpheusProtein> proteinsSequenceProteinMap) {
+		this.proteinsSequenceProteinMap = proteinsSequenceProteinMap;
 	}
 
 	public Map<String, BigDecimal> getStaticMods() {

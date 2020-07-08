@@ -7,10 +7,12 @@ import java.util.Objects;
 public class MetamorpheusProtein {
     private String sequence;
     private Collection<Annotation> annotations;
+    private int uniqueId;
 
-    public MetamorpheusProtein(String sequence) {
+    public MetamorpheusProtein(String sequence, int uniqueId) {
         this.sequence = sequence;
         this.annotations = new HashSet<>();
+        this.uniqueId = uniqueId;
     }
 
     public String getSequence() {
@@ -21,8 +23,8 @@ public class MetamorpheusProtein {
         return annotations;
     }
 
-    public void setAnnotations(Collection<Annotation> annotations) {
-        this.annotations = annotations;
+    public int getUniqueId() {
+        return uniqueId;
     }
 
     @Override
@@ -70,6 +72,8 @@ public class MetamorpheusProtein {
         public void setDescription(String description) {
             this.description = description;
         }
+
+
     }
 
 }

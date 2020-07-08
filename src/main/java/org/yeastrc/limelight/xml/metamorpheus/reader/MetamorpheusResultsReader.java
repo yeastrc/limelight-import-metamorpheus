@@ -29,10 +29,6 @@ public class MetamorpheusResultsReader {
         Map<String, BigDecimal> staticMods = getStaticMods(mzIdentML);
         System.err.println("\tFound " + staticMods.size() + " static mods.");
 
-        // A map of proteins parsed from the mzIdentML, keyed by DBSequence.id
-        Map<String, MetamorpheusProtein> proteinMap = getProteins(mzIdentML);
-        System.err.println("\tFound " + proteinMap.size() + " protein identifications.");
-
         // A map of peptides parsed from the mzIdentML, keyed by Peptide.id in that file
         Map<String, MetamorpheusReportedPeptide> reportedPeptideMap = getPeptides(mzIdentML, staticMods);
         System.err.println("\tFound " + reportedPeptideMap.size() + " distinct peptide ids.");
@@ -43,10 +39,10 @@ public class MetamorpheusResultsReader {
 
         System.err.println("Done reading .mzid file.");
 
-
         MetamorpheusResults results = new MetamorpheusResults();
         results.setPeptidePSMMap( psmPeptideMap );
-        results.setProteinsMap( proteinMap );
+        results.setProteinsIdSequenceMap( getProteinsIdSequenceMap(mzIdentML) );
+        results.setProteinsSequenceProteinMap( getProteinsSequenceProteinMap(mzIdentML) );
         results.setStaticMods( staticMods );
         results.setVersion( version );
         results.setSearchDatabase(getSearchDatabase(mzIdentML));
@@ -262,13 +258,28 @@ public class MetamorpheusResultsReader {
     }
 
 
-    private static Map<String, MetamorpheusProtein> getProteins(MzIdentMLType mzIdentML) throws Exception {
-        Map<String, MetamorpheusProtein> proteinMap = new HashMap<>();
+    private static Map<String, String> getProteinsIdSequenceMap(MzIdentMLType mzIdentML) throws Exception {
+        Map<String, String> proteinMap = new HashMap<>();
 
         SequenceCollectionType sequenceCollection = getSequenceCollection(mzIdentML);
 
         for(DBSequenceType dbSequence : sequenceCollection.getDBSequence()) {
             String id = dbSequence.getId();
+            String sequence = dbSequence.getSeq();
+
+            proteinMap.put(id, sequence);
+        }
+
+        return proteinMap;
+    }
+
+    private static Map<String, MetamorpheusProtein> getProteinsSequenceProteinMap(MzIdentMLType mzIdentML) throws Exception {
+        Map<String, MetamorpheusProtein> proteinMap = new HashMap<>();
+
+        SequenceCollectionType sequenceCollection = getSequenceCollection(mzIdentML);
+        int counter = 1;
+
+        for(DBSequenceType dbSequence : sequenceCollection.getDBSequence()) {
             String name = dbSequence.getName();
             String accession = dbSequence.getAccession();
             String sequence = dbSequence.getSeq();
@@ -277,10 +288,13 @@ public class MetamorpheusResultsReader {
             anno.setDescription( name );
             anno.setName( accession );
 
-            MetamorpheusProtein metaProtein = new MetamorpheusProtein(sequence);
-            metaProtein.getAnnotations().add(anno);
+            if(!proteinMap.containsKey(sequence)) {
+                proteinMap.put(sequence, new MetamorpheusProtein(sequence, counter));
+                counter++;
+            }
 
-            proteinMap.put(id, metaProtein);
+            MetamorpheusProtein metaProtein = proteinMap.get(sequence);
+            metaProtein.getAnnotations().add(anno);
         }
 
         return proteinMap;
