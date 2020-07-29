@@ -132,11 +132,9 @@ public class MetamorpheusResultsReader {
     }
 
     private static double getMassDiff(double observedMz, double expectedMz, int charge) {
-        double MASS_HYDROGEN = 	1.007825035;
-        double subtractedHydrogenMasses = MASS_HYDROGEN * charge;
 
-        double neutralObservedMass = observedMz * charge - subtractedHydrogenMasses;
-        double neutralExpectedMass = expectedMz * charge - subtractedHydrogenMasses;
+        double neutralObservedMass = observedMz * charge;
+        double neutralExpectedMass = expectedMz * charge;
 
         return neutralObservedMass - neutralExpectedMass;
     }

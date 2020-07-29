@@ -208,6 +208,12 @@ public class XMLBuilder {
 				FilterablePsmAnnotations xmlFilterablePsmAnnotations = new FilterablePsmAnnotations();
 				xmlPsm.setFilterablePsmAnnotations( xmlFilterablePsmAnnotations );
 
+				if(conversionParameters.isOpenMod() && psm.getMassDiff() != null) {
+					PsmOpenModification xmlPsmOpenModification = new PsmOpenModification();
+					xmlPsm.setPsmOpenModification(xmlPsmOpenModification);
+					xmlPsmOpenModification.setMass(psm.getMassDiff());
+				}
+
 				// handle psm scores
 
 				{

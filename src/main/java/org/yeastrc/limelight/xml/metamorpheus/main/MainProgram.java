@@ -44,6 +44,9 @@ public class MainProgram implements Runnable {
 	@CommandLine.Option(names = { "-m", "--mzid" }, required = true, description = "Full path to the location of the mzIdentML file (.mzid).")
 	private File mzidFile;
 
+	@CommandLine.Option(names = { "--open-mod" }, required = false, description = "If present, the mass different between observed and calculated mass will be reported as an open mod.")
+	private boolean openMod;
+
 	@CommandLine.Option(names = { "-o", "--out-file" }, required = true, description = "Full path to use for the Limelight XML output file (including file name).")
 	private String outFile;
 
@@ -74,7 +77,7 @@ public class MainProgram implements Runnable {
 		}
 
 		ConversionProgramInfo cpi = ConversionProgramInfo.createInstance( String.join( " ",  args ) );
-		ConversionParameters cp = new ConversionParameters(mzidFile, outFile, cpi, tomlFiles);
+		ConversionParameters cp = new ConversionParameters(mzidFile, outFile, cpi, tomlFiles, openMod);
 
 		try {
 			ConverterRunner.createInstance().convertToLimelightXML(cp);
