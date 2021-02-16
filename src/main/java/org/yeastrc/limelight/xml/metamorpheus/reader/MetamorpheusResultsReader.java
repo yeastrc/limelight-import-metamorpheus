@@ -74,6 +74,7 @@ public class MetamorpheusResultsReader {
 
         for(SpectrumIdentificationResultType result : spectrumIdentificationList.getSpectrumIdentificationResult()) {
             int scanNumber = getScanNumberFromSpectrumID(result.getSpectrumID());
+            BigDecimal retentionTime = BigDecimal.valueOf(getRetentionTimeFromResult(result) * 60); // looks to be reported as minutes, we need seconds
 
             for(SpectrumIdentificationItemType item : result.getSpectrumIdentificationItem()) {
 
@@ -113,11 +114,12 @@ public class MetamorpheusResultsReader {
                 psm.setDecoy(false);
                 psm.setMassDiff(massDiff);
                 psm.setPeptideSequence(reportedPeptide.getNakedPeptide());
-                psm.setPrecursorNeutralMass(obsMZ);
+                psm.setObservedMoverZ(obsMZ);
                 psm.setqValue(qvalue);
                 psm.setRank(BigDecimal.valueOf(rank).setScale(0, RoundingMode.HALF_UP));
                 psm.setScanNumber(scanNumber);
                 psm.setScore(score);
+                psm.setRetentionTime(retentionTime);
 
                 if(!psmPeptideMap.containsKey(reportedPeptide)) {
                     psmPeptideMap.put(reportedPeptide, new HashSet<>());
@@ -137,6 +139,17 @@ public class MetamorpheusResultsReader {
         double neutralExpectedMass = expectedMz * charge;
 
         return neutralObservedMass - neutralExpectedMass;
+    }
+
+    private static double getRetentionTimeFromResult(SpectrumIdentificationResultType result) throws Exception {
+
+        for(AbstractParamType param : result.getParamGroup()) {
+            if (param.getName().equals("scan start time")) {
+                return Double.valueOf(param.getValue());
+            }
+        }
+
+        throw new Exception("Could not get retention time.");
     }
 
     private static int getScanNumberFromSpectrumID(String spectrumID) throws Exception {

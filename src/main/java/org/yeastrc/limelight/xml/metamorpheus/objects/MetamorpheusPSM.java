@@ -1,7 +1,6 @@
 package org.yeastrc.limelight.xml.metamorpheus.objects;
 
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -11,9 +10,10 @@ public class MetamorpheusPSM {
 	private BigDecimal massDiff;
 	private BigDecimal score;
 	private BigDecimal rank;
+	private BigDecimal retentionTime;
 
 	private int scanNumber;
-	private BigDecimal precursorNeutralMass;
+	private BigDecimal observedMoverZ;
 	private int charge;
 
 	private String peptideSequence;
@@ -37,7 +37,7 @@ public class MetamorpheusPSM {
 				", score=" + score +
 				", rank=" + rank +
 				", scanNumber=" + scanNumber +
-				", precursorNeutralMass=" + precursorNeutralMass +
+				", observedMoverZ=" + observedMoverZ +
 				", charge=" + charge +
 				", peptideSequence='" + peptideSequence + '\'' +
 				", modifications=" + modifications +
@@ -53,13 +53,13 @@ public class MetamorpheusPSM {
 		return scanNumber == metamorpheusPSM.scanNumber &&
 				rank == metamorpheusPSM.rank &&
 				charge == metamorpheusPSM.charge &&
-				precursorNeutralMass.equals(metamorpheusPSM.precursorNeutralMass) &&
+				observedMoverZ.equals(metamorpheusPSM.observedMoverZ) &&
 				peptideSequence.equals(metamorpheusPSM.peptideSequence);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(scanNumber, rank, precursorNeutralMass, charge, peptideSequence);
+		return Objects.hash(scanNumber, rank, observedMoverZ, charge, peptideSequence);
 	}
 
 	public BigDecimal getqValue() {
@@ -94,12 +94,12 @@ public class MetamorpheusPSM {
 		this.scanNumber = scanNumber;
 	}
 
-	public BigDecimal getPrecursorNeutralMass() {
-		return precursorNeutralMass;
+	public BigDecimal getObservedMoverZ() {
+		return observedMoverZ;
 	}
 
-	public void setPrecursorNeutralMass(BigDecimal precursorNeutralMass) {
-		this.precursorNeutralMass = precursorNeutralMass;
+	public void setObservedMoverZ(BigDecimal observedMoverZ) {
+		this.observedMoverZ = observedMoverZ;
 	}
 
 	public int getCharge() {
@@ -132,5 +132,13 @@ public class MetamorpheusPSM {
 
 	public void setRank(BigDecimal rank) {
 		this.rank = rank;
+	}
+
+	public BigDecimal getRetentionTime() {
+		return retentionTime;
+	}
+
+	public void setRetentionTime(BigDecimal retentionTime) {
+		this.retentionTime = retentionTime;
 	}
 }
