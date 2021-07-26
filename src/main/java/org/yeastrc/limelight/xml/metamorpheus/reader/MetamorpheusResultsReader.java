@@ -217,12 +217,19 @@ public class MetamorpheusResultsReader {
     private static Map<Integer, BigDecimal> getDynamicMods(PeptideType peptide, Map<String, BigDecimal> staticMods) {
         Map<Integer, BigDecimal> mods = new HashMap<>();
 
+        System.err.println("processing Peptide: " + peptide.getId());
+
         for(ModificationType mod : peptide.getModification()) {
 
             String peptideSequence = peptide.getPeptideSequence();
             int position = mod.getLocation();
-            String moddedResidue = peptideSequence.substring(position - 1, position);
             BigDecimal moddedMass = BigDecimal.valueOf(mod.getMonoisotopicMassDelta());
+
+            String moddedResidue;
+
+            if(position == 0) { moddedResidue = "n"; }
+            else if(position == peptideSequence.length() + 1) { moddedResidue = "c"; }
+            else { moddedResidue = peptideSequence.substring(position - 1, position); }
 
             if(!staticMods.containsKey(moddedResidue) || !bigDecimalsAreEqual(staticMods.get(moddedResidue), moddedMass, 3)) {
                 mods.put(mod.getLocation(), BigDecimal.valueOf(mod.getMonoisotopicMassDelta()));
