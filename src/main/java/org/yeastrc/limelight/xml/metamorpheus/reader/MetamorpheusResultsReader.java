@@ -217,8 +217,6 @@ public class MetamorpheusResultsReader {
     private static Map<Integer, BigDecimal> getDynamicMods(PeptideType peptide, Map<String, BigDecimal> staticMods) {
         Map<Integer, BigDecimal> mods = new HashMap<>();
 
-        System.err.println("processing Peptide: " + peptide.getId());
-
         for(ModificationType mod : peptide.getModification()) {
 
             String peptideSequence = peptide.getPeptideSequence();
